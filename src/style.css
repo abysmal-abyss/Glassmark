@@ -22,3 +22,18 @@
 @container (max-width:700px){.widget-bookmarks .group-grid{grid-template-columns:1fr;gap:8px}.widget-bookmarks .bookmark-group{min-height:0}.widget-bookmarks .link-list{grid-template-columns:repeat(5,minmax(0,1fr))}.widget-bookmarks .bookmark-head{gap:8px}.widget-bookmarks .bookmark-actions{flex-wrap:wrap;justify-content:flex-end}.widget-bookmarks .bookmark-actions select{max-width:150px}}
 @container (max-width:380px){.move-grip small{display:none}.edit-toolbar{left:6px;right:6px;padding:0 3px}.size-controls{gap:2px}.size-controls button{min-width:26px;padding:4px 3px;font-size:8px}.remove-widget{padding:1px 4px}}
 .canvas.is-editing .widget:not(.widget-greeting){background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.055) 38%,rgba(173,209,238,.085)),rgba(255,255,255,.075)}
+
+/* Uploaded wallpapers should keep their original colors; the earlier page-wide
+   navy wash made every image look blue even outside Arrange mode. */
+body[data-theme][style*="data:image"]:before{background:linear-gradient(180deg,rgba(9,17,29,.06),rgba(9,17,29,.14)),var(--custom-wallpaper);background-position:center;background-size:cover}
+body[data-theme][style*="data:image"]:after{background:linear-gradient(180deg,transparent 68%,rgba(7,16,30,.12)),radial-gradient(ellipse at 55% 100%,rgba(26,39,55,.12),transparent 55%)}
+.calendar-date{font:600 52px/1 Manrope,sans-serif;letter-spacing:-2px;margin-top:18px}
+.calendar-caption{font-size:13px;color:var(--muted);margin-top:7px}
+.quick-link-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:16px}
+.quick-link-list a{display:flex;align-items:center;gap:8px;min-width:0;color:#fff;text-decoration:none;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-link-icon{width:27px;height:27px;flex:0 0 27px;border-radius:9px;background:var(--brand);display:grid;place-items:center;font-weight:700;overflow:hidden}
+.quick-link-icon img{width:100%;height:100%;object-fit:cover}
+.stats-value{font:600 54px/1 Manrope,sans-serif;letter-spacing:-2px;margin:18px 0 6px}
+.quote-text{margin:20px 0 12px;font:500 18px/1.4 Manrope,sans-serif;letter-spacing:-.3px}
+@media(max-width:900px){.widget-calendar,.widget-quicklinks,.widget-stats,.widget-quote{grid-column:span 3!important;grid-row:auto!important}}
+@media(max-width:600px){.widget-calendar,.widget-quicklinks,.widget-stats,.widget-quote{grid-column:span 1!important;grid-row:auto!important;padding:17px 15px;min-height:128px}.widget-quote{grid-column:1/-1!important}}
