@@ -53,3 +53,20 @@ body[data-theme][style*="data:image"]:after{background:none}
 .widget:not(.widget-greeting)::before{background:radial-gradient(ellipse at 8% 0%,rgba(255,255,255,.2),transparent 42%),linear-gradient(125deg,rgba(255,255,255,.08),transparent 30%,transparent 74%,rgba(192,166,214,.05))}
 .canvas.is-editing .widget:not(.widget-greeting){background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045) 42%,rgba(145,112,170,.045)),rgba(20,14,28,.12)}
 .canvas.is-editing .widget-greeting{background:transparent!important}
+
+/* Let the selected image or gradient fill the whole viewport. Keep the
+   wallpaper itself untouched so its own colors show through the glass. */
+html{min-height:100%;background:#09080e}
+body{background:transparent;isolation:isolate}
+body[data-theme="dusk"]:before,body[data-theme="midnight"]:before{background:radial-gradient(ellipse at 76% 14%,rgba(92,52,120,.36),transparent 38%),linear-gradient(145deg,#08070c 0%,#17101d 48%,#09080e 100%);background-position:center;background-size:cover}
+body[data-theme][style*="data:image"]:before{background-image:var(--custom-wallpaper);background-position:center;background-size:cover;background-repeat:no-repeat}
+body[data-theme][style*="data:image"]:after{background:none}
+body[data-theme]:after{background:linear-gradient(180deg,transparent 60%,rgba(5,4,8,.12))}
+.widget-greeting{background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.widget:not(.widget-greeting){background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.2);backdrop-filter:blur(28px) saturate(135%);-webkit-backdrop-filter:blur(28px) saturate(135%)}
+.widget:not(.widget-greeting)::before{background:linear-gradient(135deg,rgba(255,255,255,.12),transparent 32%,transparent 74%,rgba(255,255,255,.025))}
+.canvas.is-editing .widget:not(.widget-greeting){background:rgba(255,255,255,.055)}
+.canvas.is-editing .widget-greeting{background:transparent!important}
+.brand-mark{background:linear-gradient(135deg,#f1e8f7,#c8a8dc);color:#24172c}
+h1 span{color:#d4b4e6}
+.glass-button.active{background:rgba(202,166,222,.2);border-color:rgba(230,207,243,.55)}
