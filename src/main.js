@@ -46,6 +46,7 @@ function formatDate() { return new Intl.DateTimeFormat('en', { weekday: 'long', 
 function render() {
   document.body.dataset.theme = state.theme;
   document.body.dataset.icon = state.iconStyle;
+  document.body.dataset.wallpaper = state.wallpaper ? 'custom' : 'theme';
   document.body.style.setProperty('--custom-wallpaper', state.wallpaper ? `url("${state.wallpaper}")` : 'none');
   document.querySelector('#app').innerHTML = `
     <header class="topbar glass">
