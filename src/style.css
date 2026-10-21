@@ -78,3 +78,14 @@ body[data-wallpaper="custom"]:after{background:none}
 .brand-mark{background:linear-gradient(135deg,#f1e8f7,#c8a8dc);color:#24172c}
 h1 span{color:#d4b4e6}
 .glass-button.active{background:rgba(202,166,222,.2);border-color:rgba(230,207,243,.55)}
+
+/* Paint the wallpaper/gradient directly on the document root. This avoids
+   stacking-context behavior hiding fixed pseudo-element backgrounds. */
+html{min-height:100%;background-color:#09080e;background-image:radial-gradient(ellipse at 76% 14%,rgba(92,52,120,.36),transparent 38%),linear-gradient(145deg,#08070c 0%,#17101d 48%,#09080e 100%);background-position:center;background-size:cover;background-attachment:fixed}
+html[data-theme="ocean"]{background-image:radial-gradient(ellipse at 78% 18%,rgba(35,116,130,.25),transparent 38%),linear-gradient(145deg,#080a10,#111824 52%,#09080e)}
+html[data-theme="meadow"]{background-image:radial-gradient(ellipse at 78% 18%,rgba(68,117,84,.2),transparent 38%),linear-gradient(145deg,#090c0b,#141a15 52%,#080a09)}
+html[data-theme="midnight"]{background-image:radial-gradient(ellipse at 76% 14%,rgba(92,52,120,.36),transparent 38%),linear-gradient(145deg,#08070c,#17101d 48%,#09080e)}
+html[data-wallpaper="custom"]{background-image:var(--custom-wallpaper)}
+body{background:transparent!important}
+body:before,body:after{display:none!important}
+#app{position:relative;z-index:auto;min-height:100vh;background:transparent}
