@@ -37,3 +37,19 @@ body[data-theme][style*="data:image"]:after{background:linear-gradient(180deg,tr
 .quote-text{margin:20px 0 12px;font:500 18px/1.4 Manrope,sans-serif;letter-spacing:-.3px}
 @media(max-width:900px){.widget-calendar,.widget-quicklinks,.widget-stats,.widget-quote{grid-column:span 3!important;grid-row:auto!important}}
 @media(max-width:600px){.widget-calendar,.widget-quicklinks,.widget-stats,.widget-quote{grid-column:span 1!important;grid-row:auto!important;padding:17px 15px;min-height:128px}.widget-quote{grid-column:1/-1!important}}
+
+/* Keep the dusk and midnight palettes purple-black, and render custom wallpaper
+   pixels directly without a blue or navy wash above them. */
+body[data-theme="dusk"]:before,body[data-theme="midnight"]:before{background:linear-gradient(145deg,#08070d 0%,#171020 48%,#09080f 100%)}
+body[data-theme="dusk"]:after,body[data-theme="midnight"]:after{background:radial-gradient(ellipse at 70% 18%,rgba(86,48,113,.20),transparent 42%),linear-gradient(180deg,transparent 55%,rgba(5,4,9,.28))}
+body[data-theme][style*="data:image"]:before{background:var(--custom-wallpaper);background-position:center;background-size:cover}
+body[data-theme][style*="data:image"]:after{background:none}
+.canvas{grid-auto-rows:minmax(110px,max-content);grid-auto-flow:row dense;align-items:stretch}
+.widget{height:auto;min-height:0;max-height:1072px;overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+.widget-greeting{overflow:visible;max-height:none;background:transparent!important}
+.widget-bookmarks{min-height:0;overflow:auto}
+.widget-clock,.widget-weather,.widget-focus,.widget-note,.widget-calendar,.widget-quicklinks,.widget-stats,.widget-quote{min-height:0}
+.widget:not(.widget-greeting){background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045) 42%,rgba(145,112,170,.045)),rgba(20,14,28,.12)}
+.widget:not(.widget-greeting)::before{background:radial-gradient(ellipse at 8% 0%,rgba(255,255,255,.2),transparent 42%),linear-gradient(125deg,rgba(255,255,255,.08),transparent 30%,transparent 74%,rgba(192,166,214,.05))}
+.canvas.is-editing .widget:not(.widget-greeting){background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.045) 42%,rgba(145,112,170,.045)),rgba(20,14,28,.12)}
+.canvas.is-editing .widget-greeting{background:transparent!important}
