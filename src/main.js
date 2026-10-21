@@ -92,19 +92,37 @@ function bind() {
   document.querySelector('#viewSelect')?.addEventListener('change',e=>{document.querySelector('.widget-bookmarks').dataset.view=e.target.value;state.view=e.target.value;save();});
   if(state.view) {const el=document.querySelector('.widget-bookmarks'); if(el){el.dataset.view=state.view;document.querySelector('#viewSelect').value=state.view;}}
 }
-function resizeWidget(id,dir) { const w=state.widgets.find(x=>x.id===id);if(!w)return; if(dir==='w+')w.w=Math.min(state.columns,w.w+1);if(dir==='w-')w.w=Math.max(2,w.w-1);if(dir==='h+')w.h=Math.min(8,w.h+1);if(dir==='h-')w.h=Math.max(1,w.h-1);w.x=Math.min(w.x,state.columns-w.w+1);save();render(); }
-function pointToGrid(x,y,canvas) {
-  const r=canvas.getBoundingClientRect(), style=getComputedStyle(canvas);
-  const columns=style.gridTemplateColumns.split(' ').filter(Boolean).map(parseFloat);
-  const gap=parseFloat(style.columnGap)||0, rowHeight=parseFloat(style.gridAutoRows)||134, rowGap=parseFloat(style.rowGap)||0;
-  const colWidth=columns[0]||((r.width-gap*(state.columns-1))/state.columns);
-  return {x:Math.max(1,Math.min(columns.length||state.columns,Math.floor((x-r.left)/(colWidth+gap))+1)),y:Math.max(1,Math.floor((y-r.top)/(rowHeight+rowGap))+1)};
+function gridMetrics(canvas) {
+  const style=getComputedStyle(canvas), tracks=style.gridTemplateColumns.trim().split(/\s+/).map(parseFloat);
+  const gap=parseFloat(style.columnGap)||0, rowGap=parseFloat(style.rowGap)||0;
+  return {columns:tracks.length||state.columns,columnStep:(tracks[0]||100)+gap,rowStep:(parseFloat(style.gridAutoRows)||134)+rowGap};
 }
-function startMove(e) { if(e.button!==0||!state.dragMode)return;e.preventDefault();const el=e.currentTarget.closest('.widget'), canvas=document.querySelector('#canvas'), w=state.widgets.find(x=>x.id===el.dataset.widget), p=pointToGrid(e.clientX,e.clientY,canvas);if(!w)return;drag={kind:'move',id:w.id,dx:p.x-w.x,dy:p.y-w.y,el};el.classList.add('dragging');window.addEventListener('pointermove',onDrag);window.addEventListener('pointerup',endDrag,{once:true}); }
-function startResize(e) { e.preventDefault();e.stopPropagation();const el=e.currentTarget.closest('.widget'),w=state.widgets.find(x=>x.id===el.dataset.widget),p=pointToGrid(e.clientX,e.clientY,document.querySelector('#canvas'));drag={kind:'resize',id:w.id,start:p,w:w.w,h:w.h,el};el.classList.add('dragging');window.addEventListener('pointermove',onDrag);window.addEventListener('pointerup',endDrag,{once:true}); }
-function onDrag(e) { if(!drag)return;const canvas=document.querySelector('#canvas'),p=pointToGrid(e.clientX,e.clientY,canvas),w=state.widgets.find(x=>x.id===drag.id);if(drag.kind==='move'){w.x=Math.max(1,Math.min(state.columns-w.w+1,p.x-drag.dx));w.y=Math.max(1,p.y-drag.dy);}else{w.w=Math.max(2,Math.min(state.columns-drag.start.x+1,drag.w+p.x-drag.start.x));w.h=Math.max(1,Math.min(8,drag.h+p.y-drag.start.y));}applyLayout(); }
+function resizeWidget(id,dir) {
+  const w=state.widgets.find(x=>x.id===id), canvas=document.querySelector('#canvas');if(!w||!canvas)return;
+  const {columns}=gridMetrics(canvas);
+  if(dir==='w+')w.w=Math.min(columns,w.w+1);if(dir==='w-')w.w=Math.max(2,w.w-1);
+  if(dir==='h+')w.h=Math.min(8,w.h+1);if(dir==='h-')w.h=Math.max(1,w.h-1);
+  w.x=Math.min(w.x,columns-w.w+1);save();render();
+}
+function startTrackingDrag(kind,e,el,w) {
+  const {columnStep,rowStep}=gridMetrics(document.querySelector('#canvas'));
+  drag={kind,id:w.id,startX:e.clientX,startY:e.clientY,x:w.x,y:w.y,w:w.w,h:w.h,columnStep,rowStep,el};
+  el.classList.add('dragging');
+  window.addEventListener('pointermove',onDrag);
+  window.addEventListener('pointerup',endDrag,{once:true});
+  window.addEventListener('pointercancel',endDrag,{once:true});
+}
+function startMove(e) { if(e.button!==0||!state.dragMode)return;e.preventDefault();const el=e.currentTarget.closest('.widget'),w=state.widgets.find(x=>x.id===el.dataset.widget);if(!w)return;startTrackingDrag('move',e,el,w); }
+function startResize(e) { e.preventDefault();e.stopPropagation();const el=e.currentTarget.closest('.widget'),w=state.widgets.find(x=>x.id===el.dataset.widget);if(!w)return;startTrackingDrag('resize',e,el,w); }
+function onDrag(e) {
+  if(!drag)return;const canvas=document.querySelector('#canvas'),w=state.widgets.find(x=>x.id===drag.id);if(!w)return;
+  const {columns}=gridMetrics(canvas),dx=Math.round((e.clientX-drag.startX)/drag.columnStep),dy=Math.round((e.clientY-drag.startY)/drag.rowStep);
+  if(drag.kind==='move'){w.x=Math.max(1,Math.min(columns-w.w+1,drag.x+dx));w.y=Math.max(1,drag.y+dy);}
+  else{w.w=Math.max(2,Math.min(columns-drag.x+1,drag.w+dx));w.h=Math.max(1,Math.min(8,drag.h+dy));}
+  applyLayout();
+}
 function applyLayout(){for(const w of state.widgets){const el=document.querySelector(`[data-widget="${w.id}"]`);if(el)el.style.cssText=`--x:${w.x};--y:${w.y};--w:${w.w};--h:${w.h}`;}}
-function endDrag(){if(drag){drag.el.classList.remove('dragging');save();drag=null;}window.removeEventListener('pointermove',onDrag);}
+function endDrag(){if(drag){drag.el.classList.remove('dragging');save();drag=null;}window.removeEventListener('pointermove',onDrag);window.removeEventListener('pointercancel',endDrag);}
 function formatFocus(){const n=Math.max(0,state.focusRemaining??1500);return `${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`;}
 function tick(){const e=document.querySelector('#clockValue');if(e)e.textContent=new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Bucharest'}).format(new Date());if(state.focus){state.focusRemaining=Math.max(0,(state.focusRemaining??1500)-1);if(state.focusRemaining===0)state.focus=false;const f=document.querySelector('.focus-value');if(f)f.textContent=state.focus?formatFocus():'Session complete';save();}}
 function modal(title,body){const root=document.querySelector('#modalRoot');root.innerHTML=`<div class="modal-backdrop"><section class="modal glass"><div class="modal-head"><h2>${title}</h2><button class="close-modal">×</button></div>${body}</section></div>`;root.querySelector('.modal-backdrop').onclick=e=>{if(e.target===e.currentTarget)root.innerHTML='';};root.querySelector('.close-modal').onclick=()=>root.innerHTML='';return root.querySelector('.modal');}
