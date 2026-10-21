@@ -104,7 +104,7 @@ function gridMetrics(canvas) {
 function resizeWidget(id,dir) {
   const w=state.widgets.find(x=>x.id===id), canvas=document.querySelector('#canvas');if(!w||!canvas)return;
   const {columns}=gridMetrics(canvas);
-  if(dir==='w+')w.w=Math.min(columns,w.w+1);if(dir==='w-')w.w=Math.max(2,w.w-1);
+  if(dir==='w+')w.w=Math.min(columns,w.w+1);if(dir==='w-')w.w=Math.max(1,w.w-1);
   if(dir==='h+')w.h=Math.min(8,w.h+1);if(dir==='h-')w.h=Math.max(1,w.h-1);
   w.x=Math.min(w.x,columns-w.w+1);save();render();
 }
@@ -122,7 +122,7 @@ function onDrag(e) {
   if(!drag)return;const canvas=document.querySelector('#canvas'),w=state.widgets.find(x=>x.id===drag.id);if(!w)return;
   const {columns}=gridMetrics(canvas),dx=Math.round((e.clientX-drag.startX)/drag.columnStep),dy=Math.round((e.clientY-drag.startY)/drag.rowStep);
   if(drag.kind==='move'){w.x=Math.max(1,Math.min(columns-w.w+1,drag.x+dx));w.y=Math.max(1,drag.y+dy);}
-  else{w.w=Math.max(2,Math.min(columns-drag.x+1,drag.w+dx));w.h=Math.max(1,Math.min(8,drag.h+dy));}
+  else{w.w=Math.max(1,Math.min(columns-drag.x+1,drag.w+dx));w.h=Math.max(1,Math.min(8,drag.h+dy));}
   applyLayout();
 }
 function applyLayout(){for(const w of state.widgets){const el=document.querySelector(`[data-widget="${w.id}"]`);if(el)el.style.cssText=`--x:${w.x};--y:${w.y};--w:${w.w};--h:${w.h}`;}}
